@@ -64,10 +64,10 @@ jobs:
       - name: Package rock
         run: luarocks pack fs-utils-${{ steps.new_version.outputs.NEXT_VERSION }}-1.rockspec
 
-#      - name: Upload rock
-#        env:
-#          LUAROCKS_USERNAME: ${{ secrets.LUAROCKS_USERNAME }}
-#          LUAROCKS_TOKEN: ${{ secrets.LUAROCKS_PASSWORD }}
-#        run: |
-#          echo "Uploading rock to LuaRocks"
-#          luarocks upload --api-key=$LUAROCKS_PASSWORD fs-utils-${{ steps.version.outputs.NEXT_VERSION }}-1.src.rock
+      - name: Upload rock
+        env:
+          LUAROCKS_USERNAME: ${{ secrets.LUAROCKS_USERNAME }}
+          LUAROCKS_PASSWORD: ${{ secrets.LUAROCKS_TOKEN }}
+        run: |
+          echo "Uploading rock to LuaRocks"
+          luarocks upload --api-key=$LUAROCKS_PASSWORD fs-utils-${{ steps.version.outputs.NEXT_VERSION }}-1.src.rock
