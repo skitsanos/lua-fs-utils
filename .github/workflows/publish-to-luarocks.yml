@@ -32,7 +32,8 @@ jobs:
       - name: Get current version
         id: version
         run: |          
-          git tag | sort --version-sort | tail -n1
+          version=$(git tag | sort --version-sort | tail -n1)
+          echo "$version"
           
 #          version="${{ env.RELEASE_VERSION }}"
 #          if [ -z "$version" ]; then
