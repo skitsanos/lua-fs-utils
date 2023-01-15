@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - '.github/**/*.yml'
+      - '.gitignore'
 
 jobs:
   build:
@@ -25,31 +28,37 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.1 luarocks
 
-      - name: "Install semver"
-        run: |
-          # Download the script and save it to /usr/local/bin
-          wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
-          # Make script executable
-          chmod +x /usr/local/bin/semver
-          # Prove it works
-          semver --version
+      - uses: SOLIDSoftworks/semver-tags@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          tag-prefix: ''
+          default-version: '1.0.0'
 
-      - name: Increment version
-        id: new_version
-        run: |
-          NEXT_VERSION=$(semver bump patch ${{env.LATEST_VERSION}})
-          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
-
-      - run: echo "Next version is ${{ steps.new_version.outputs.NEXT_VERSION }}"
-
-      - name: Create new tag
-        run: |
-          git config --global user.email "noreply@skitsanos.com"
-          git config --global user.name "ReleaseBot"
-          git tag -a ${{ steps.new_version.outputs.NEXT_VERSION }} -m "release version ${{ steps.new_version.outputs.NEXT_VERSION }}"
-
-      - name: Push new tag
-        run: git push origin ${{ steps.new_version.outputs.NEXT_VERSION }}
+#      - name: "Install semver"
+#        run: |
+#          # Download the script and save it to /usr/local/bin
+#          wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+#          # Make script executable
+#          chmod +x /usr/local/bin/semver
+#          # Prove it works
+#          semver --version
+#
+#      - name: Increment version
+#        id: new_version
+#        run: |
+#          NEXT_VERSION=$(semver bump patch ${{env.LATEST_VERSION}})
+#          echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_OUTPUT
+#
+#      - run: echo "Next version is ${{ steps.new_version.outputs.NEXT_VERSION }}"
+#
+#      - name: Create new tag
+#        run: |
+#          git config --global user.email "noreply@skitsanos.com"
+#          git config --global user.name "ReleaseBot"
+#          git tag -a ${{ steps.new_version.outputs.NEXT_VERSION }} -m "release version ${{ steps.new_version.outputs.NEXT_VERSION }}"
+#
+#      - name: Push new tag
+#        run: git push origin ${{ steps.new_version.outputs.NEXT_VERSION }}
 #
 #      - name: Create rockspec
 #        run: luarocks write_rockspec mymodule ${{ steps.new_version.outputs.version }}
