@@ -70,4 +70,4 @@ jobs:
           LUAROCKS_PASSWORD: ${{ secrets.LUAROCKS_TOKEN }}
         run: |
           echo "Uploading rock to LuaRocks"
-          luarocks upload --api-key=$LUAROCKS_PASSWORD fs-utils-${{ steps.version.outputs.NEXT_VERSION }}-1.src.rock
+          luarocks upload --skip-pack --api-key=$LUAROCKS_PASSWORD fs-utils-${{ steps.version.outputs.NEXT_VERSION }}-1.src.rock
