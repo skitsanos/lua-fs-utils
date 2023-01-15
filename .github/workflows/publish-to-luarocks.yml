@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.1 luarocks
-          luarocks install cjson
+          sudo luarocks install cjson
 
       - name: "Install semver"
         run: |
