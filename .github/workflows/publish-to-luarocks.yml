@@ -27,7 +27,6 @@ jobs:
 
       - name: Get current version
         id: version
-        continue-on-error: true
         run: |
           version=$(git describe --tags)
           if [ -z "$version" ]; then
