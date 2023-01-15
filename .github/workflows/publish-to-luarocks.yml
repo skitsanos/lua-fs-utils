@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: "Set latest tag"
+      - name: "Set latest version"
         id: set-latest-tag
         run: |
           currentVersion=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{github.repository}}/tags | jq -r 'sort_by(.name | split(".") | map(tonumber)) | reverse | .[0].name')
@@ -27,6 +27,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.1 luarocks
+          luarocks install cjson
 
       - name: "Install semver"
         run: |
@@ -69,5 +70,5 @@ jobs:
           LUAROCKS_USERNAME: ${{ secrets.LUAROCKS_USERNAME }}
           LUAROCKS_PASSWORD: ${{ secrets.LUAROCKS_TOKEN }}
         run: |
-          echo "Uploading rock to LuaRocks"
+          echo "Uploading rock to LuaRocks"      
           luarocks upload --api-key=$LUAROCKS_PASSWORD fs-utils-${{ steps.new_version.outputs.NEXT_VERSION }}-1.rockspec
