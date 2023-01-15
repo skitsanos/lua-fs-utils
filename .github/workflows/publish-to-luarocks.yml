@@ -28,21 +28,21 @@ jobs:
         id: version
         run: echo ::set-output name=version::$(git describe --tags)
 
-      - name: Increment version
-        id: new_version
-        run: semver -i patch ${{ steps.version.outputs.version }}
-
-      - name: Create new tag
-        run: git tag -a ${{ steps.new_version.outputs.version }} -m "release version ${{ steps.new_version.outputs.version }}"
-
-      - name: Push new tag
-        run: git push origin ${{ steps.new_version.outputs.version }}
-
-      - name: Create rockspec
-        run: luarocks write_rockspec mymodule ${{ steps.new_version.outputs.version }}
-
-      - name: Package rock
-        run: luarocks pack mymodule-${{ steps.new_version.outputs.version }}-1.rockspec
+#      - name: Increment version
+#        id: new_version
+#        run: semver patch ${{ steps.version.outputs.version }}
+#
+#      - name: Create new tag
+#        run: git tag -a ${{ steps.new_version.outputs.version }} -m "release version ${{ steps.new_version.outputs.version }}"
+#
+#      - name: Push new tag
+#        run: git push origin ${{ steps.new_version.outputs.version }}
+#
+#      - name: Create rockspec
+#        run: luarocks write_rockspec mymodule ${{ steps.new_version.outputs.version }}
+#
+#      - name: Package rock
+#        run: luarocks pack mymodule-${{ steps.new_version.outputs.version }}-1.rockspec
 
 #      - name: Upload rock
 #        env:
