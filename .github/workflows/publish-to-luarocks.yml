@@ -1,0 +1,50 @@
+name: LuaRocks Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Lua
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks git
+      - name: Install semver
+        run: |
+          # Download the script and save it to /usr/local/bin
+          wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+          # Make script executable
+          chmod +x /usr/local/bin/semver
+          # Prove it works
+          semver --version
+
+      - name: Get current version
+        id: version
+        run: echo ::set-output name=version::$(git describe --tags)
+
+      - name: Increment version
+        id: new_version
+        run: semver -i patch ${{ steps.version.outputs.version }}
+
+      - name: Create new tag
+        run: git tag -a ${{ steps.new_version.outputs.version }} -m "release version ${{ steps.new_version.outputs.version }}"
+
+      - name: Push new tag
+        run: git push origin ${{ steps.new_version.outputs.version }}
+
+      - name: Create rockspec
+        run: luarocks write_rockspec mymodule ${{ steps.new_version.outputs.version }}
+
+      - name: Package rock
+        run: luarocks pack mymodule-${{ steps.new_version.outputs.version }}-1.rockspec
+
+#      - name: Upload rock
+#        env:
+#          LUAROCKS_USERNAME: ${{ secrets.LUAROCKS_USERNAME }}
+#          LUAROCKS_PASSWORD: ${{ secrets.LUAR
