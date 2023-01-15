@@ -12,6 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: "Set latest tag"
         id: set-latest-tag
         run: |
@@ -19,37 +20,27 @@ jobs:
           echo "LATEST_VERSION=$currentVersion" >> $GITHUB_ENV
       - run: echo "Current version is ${{env.LATEST_VERSION}}"
 
-#      - name: Setup Lua
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y lua5.1 luarocks
-#      - name: Install semver
-#        run: |
-#          # Download the script and save it to /usr/local/bin
-#          wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
-#          # Make script executable
-#          chmod +x /usr/local/bin/semver
-#          # Prove it works
-#          semver --version
-#
-#      - name: Get current version
-#        id: version
-#        run: |
-#          version=$(git tag | sort --version-sort | tail -n1)
-#          echo "$version"
-          
-#          version="${{ env.RELEASE_VERSION }}"
-#          if [ -z "$version" ]; then
-#            version="1.0.0"
-#          fi
-#          echo "$version"
-#          echo "{version}={$version}" >> $GITHUB_OUTPUT
+      - name: "Setup Lua"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks
 
-#      - name: Increment version
-#        id: new_version
-#        run: |
-#          echo "Next version: ${{ steps.version.outputs.version }}"
-#          semver bump patch ${{ steps.version.outputs.version }}
+      - name: "Install semver"
+        run: |
+          # Download the script and save it to /usr/local/bin
+          wget -O /usr/local/bin/semver https://raw.githubusercontent.com/fsaintjacques/semver-tool/master/src/semver
+          # Make script executable
+          chmod +x /usr/local/bin/semver
+          # Prove it works
+          semver --version
+
+      - name: Increment version
+        id: new_version
+        run: |
+          NEXT_VERSION=$(semver bump patch ${{env.LATEST_VERSION}})
+          echo "{NEXT_VERSION}={$NEXT_VERSION}" >> $GITHUB_OUTPUT
+
+      - run: echo "Next version is ${{ steps.new_version.outputs.NEXT_VERSION }}"
 #
 #      - name: Create new tag
 #        run: git tag -a ${{ steps.new_version.outputs.version }} -m "release version ${{ steps.new_version.outputs.version }}"
