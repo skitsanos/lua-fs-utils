@@ -28,10 +28,11 @@ jobs:
       - name: Get current version
         id: version
         run: |
-          version=$(git describe --tags)
-          if [ $? -ne 0 ]; then
+          version=$(git describe --tags --abbrev=0 2>/dev/null)
+          if [ -z "$version" ]; then
             version="1.0.0"
           fi
+          echo "$version"
           echo "{version}={$version}" >> $GITHUB_OUTPUT
 
       - name: Increment version
