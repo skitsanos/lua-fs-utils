@@ -12,6 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
       - name: Setup Lua
         run: |
           sudo apt-get update
@@ -28,18 +31,18 @@ jobs:
       - name: Get current version
         id: version
         run: |
-          version=$(git describe --tags)
+          version="${{ env.RELEASE_VERSION }}"
           if [ -z "$version" ]; then
             version="1.0.0"
           fi
           echo "$version"
           echo "{version}={$version}" >> $GITHUB_OUTPUT
 
-      - name: Increment version
-        id: new_version
-        run: |
-          echo "Next version: ${{ steps.version.outputs.version }}"
-          semver bump patch ${{ steps.version.outputs.version }}
+#      - name: Increment version
+#        id: new_version
+#        run: |
+#          echo "Next version: ${{ steps.version.outputs.version }}"
+#          semver bump patch ${{ steps.version.outputs.version }}
 #
 #      - name: Create new tag
 #        run: git tag -a ${{ steps.new_version.outputs.version }} -m "release version ${{ steps.new_version.outputs.version }}"
