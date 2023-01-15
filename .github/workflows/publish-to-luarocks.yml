@@ -14,14 +14,16 @@ jobs:
       - uses: actions/checkout@v3
       - name: "Set latest tag"
         id: set-latest-tag
-        run: echo "latest_version=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
-
-      - run: echo "Version ${{env.latest_version}}"
+        run: |
+          #version_tag=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{github.repository}}/commits/${{github.ref}} | jq -r '.commit.message' | grep -oE 'v[0-9]+(\.[0-9]+)*')
+          #echo "version tag: ${version_tag}"
+          curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{github.repository}}/commits/${{github.ref}} | jq -r '.commit.message'
+          #echo "latest_version=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
 
 #      - name: Setup Lua
 #        run: |
 #          sudo apt-get update
-#          sudo apt-get install -y lua5.1 luarocks git
+#          sudo apt-get install -y lua5.1 luarocks
 #      - name: Install semver
 #        run: |
 #          # Download the script and save it to /usr/local/bin
