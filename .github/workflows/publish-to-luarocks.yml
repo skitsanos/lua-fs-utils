@@ -43,7 +43,10 @@ jobs:
       - run: echo "Next version is ${{ steps.new_version.outputs.NEXT_VERSION }}"
 
       - name: Create new tag
-        run: git tag -a ${{ steps.new_version.outputs.NEXT_VERSION }} -m "release version ${{ steps.new_version.outputs.NEXT_VERSION }}"
+        run: |
+          git config --global user.email "noreply@skitsanos.com"
+          git config --global user.name "ReleaseBot"
+          git tag -a ${{ steps.new_version.outputs.NEXT_VERSION }} -m "release version ${{ steps.new_version.outputs.NEXT_VERSION }}"
 
       - name: Push new tag
         run: git push origin ${{ steps.new_version.outputs.NEXT_VERSION }}
